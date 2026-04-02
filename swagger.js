@@ -1,5 +1,5 @@
 const swaggerJsdoc = require("swagger-jsdoc");
- 
+
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -8,8 +8,19 @@ const options = {
       version: "1.0.0",
       description:
         "Backend for a finance dashboard with role-based access control. Roles: viewer, analyst, admin.",
+      contact: {
+        name: "Rithvik Kumar",
+        email: "rithvikkumar30@gmail.com",
+      },
     },
-    servers: [{ url: "http://localhost:5000" }],
+    servers: [
+      {
+        url:
+          process.env.NODE_ENV === "production"
+            ? "https://finance-dashboard-api-vyn1.onrender.com"
+            : "http://localhost:5000",
+      },
+    ],
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -31,5 +42,5 @@ const options = {
   },
   apis: ["./src/routes/*.js"],
 };
- 
+
 module.exports = swaggerJsdoc(options);
