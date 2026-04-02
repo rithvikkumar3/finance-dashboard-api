@@ -4,7 +4,7 @@ A RESTful backend for a finance dashboard with role-based access control, built 
  
 ## Tech Stack
  
-- **Runtime**: Node.js (v18+)
+- **Runtime**: Node.js (v20+)
 - **Framework**: Express
 - **Database**: MongoDB + Mongoose
 - **Auth**: JWT (jsonwebtoken + bcryptjs)
@@ -12,7 +12,9 @@ A RESTful backend for a finance dashboard with role-based access control, built 
 - **API Docs**: Swagger (swagger-jsdoc + swagger-ui-express)
 - **Testing**: Jest + Supertest
  
-## Setup
+## Setup (Local)
+ 
+If you prefer running without Docker:
  
 ```bash
 # 1. Clone and install
@@ -20,7 +22,7 @@ npm install
  
 # 2. Create your env file
 cp .env.example .env
-# Fill in MONGO_URI and JWT_SECRET
+# Fill in MONGO_URI, JWT_SECRET, and optionally PORT (default: 5000)
  
 # 3. Run in development
 npm run dev
@@ -29,13 +31,50 @@ npm run dev
 http://localhost:5000/docs
 ```
  
+## Running with Docker (Recommended)
+ 
+The easiest way to get the project running — no local MongoDB installation needed.
+ 
+```bash
+# 1. Clone and create your env file
+cp .env.example .env
+# You can leave MONGO_URI as-is; Docker Compose sets it automatically
+ 
+# 2. Start everything (API + MongoDB)
+docker compose up --build
+ 
+# 3. Open Swagger docs
+http://localhost:5000/docs
+```
+ 
+To stop and remove containers:
+```bash
+docker compose down
+```
+ 
+To also delete the persisted MongoDB data:
+```bash
+docker compose down -v
+```
+ 
+> **Note:** The `docker compose` command spins up two services — `api` (your Express app) and `mongo` (MongoDB 7). The API waits for MongoDB to pass a healthcheck before starting, so you won't hit connection errors on cold starts.
+ 
+## Environment Variables
+ 
+| Variable         | Required | Default                                | Description                  |
+|------------------|----------|----------------------------------------|------------------------------|
+| `MONGO_URI`      | Yes      | `mongodb://localhost:27017/finance-db` | MongoDB connection string    |
+| `JWT_SECRET`     | Yes      | —                                      | Secret key for signing JWTs  |
+| `JWT_EXPIRES_IN` | No       | `7d`                                   | JWT token expiry duration    |
+| `PORT`           | No       | `5000`                                 | Port the server listens on   |
+ 
 ## Running Tests
  
 ```bash
 npm test
 ```
  
-Tests use a separate `finance_test` database and clean up after themselves. Make sure MongoDB is running before running tests.
+Tests use a separate `finance_test` database (auto-derived from your `MONGO_URI`) and clean up after themselves. Make sure MongoDB is running before running tests.
  
 There are 30 test cases across 4 files:
  
@@ -188,7 +227,7 @@ GET  /api/users                        → 403
 ## Project Structure
  
 ```
-finance-backend/
+finance-dashboard-api-master/
 ├── src/
 │   ├── config/
 │   │   └── db.js                 # MongoDB connection
@@ -219,3 +258,4 @@ finance-backend/
 ├── .env.example
 └── README.md
 ```
+ 
