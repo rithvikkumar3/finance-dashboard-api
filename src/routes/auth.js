@@ -34,10 +34,6 @@ const authController = require("../controllers/authController");
  *               password:
  *                 type: string
  *                 example: secret123
- *               role:
- *                 type: string
- *                 enum: [viewer, analyst, admin]
- *                 example: viewer
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -52,10 +48,6 @@ router.post(
     body("password")
       .isLength({ min: 6 })
       .withMessage("Password must be at least 6 characters"),
-    body("role")
-      .optional()
-      .isIn(["viewer", "analyst", "admin"])
-      .withMessage("Invalid role"),
   ],
   authController.register
 );

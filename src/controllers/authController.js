@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
  
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
  
   try {
     const existing = await User.findOne({ email });
@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Email already registered" });
     }
  
-    const user = await User.create({ name, email, password, role });
+    const user = await User.create({ name, email, password }); // role always defaults to "viewer" on self-registration
  
     const token = generateToken(user._id);
  
@@ -77,4 +77,3 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
- 

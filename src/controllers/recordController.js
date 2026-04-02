@@ -42,7 +42,7 @@ exports.getRecords = async (req, res) => {
   }
 };
  
-exports.getRecordById = async (req, res) => {
+exports.getRecordById = async (req, res, next) => {  // add next
   try {
     const record = await FinancialRecord.findById(req.params.id).populate(
       "createdBy",
@@ -51,7 +51,7 @@ exports.getRecordById = async (req, res) => {
     if (!record) return res.status(404).json({ message: "Record not found" });
     res.json(record);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);  // pass to error middleware instead of res.status(500)
   }
 };
  
@@ -78,7 +78,7 @@ exports.createRecord = async (req, res) => {
   }
 };
  
-exports.updateRecord = async (req, res) => {
+exports.updateRecord = async (req, res,next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -101,11 +101,11 @@ exports.updateRecord = async (req, res) => {
  
     res.json({ message: "Record updated", record });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 };
  
-exports.deleteRecord = async (req, res) => {
+exports.deleteRecord = async (req, res, next) => {
   try {
     // Soft delete — set isDeleted flag, do not remove from DB
     const record = await FinancialRecord.findByIdAndUpdate(
@@ -118,7 +118,7 @@ exports.deleteRecord = async (req, res) => {
  
     res.json({ message: "Record soft-deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    next(err);
   }
 };
  

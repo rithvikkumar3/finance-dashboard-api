@@ -125,7 +125,10 @@ exports.getMonthlyTrend = async (req, res) => {
       };
     });
  
-    res.json({ year, trend: formatted });
+    res.json({ year, trend: months.map((month, i) => {
+      const found = formatted.find((f) => f.monthNumber === i + 1);
+      return found || { month, monthNumber: i + 1, income: 0, expense: 0, net: 0 };
+    }) });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

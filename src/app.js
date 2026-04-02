@@ -25,7 +25,15 @@ app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
  
-// Global error handler
+// Handle invalid MongoDB ObjectId format
+app.use((err, req, res, next) => {
+  if (err.name === "CastError") {
+    return res.status(400).json({ message: "Invalid ID format" });
+  }
+  next(err);
+});
+
+// Global error handler  ← this already exists, keep it below
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(err.status || 500).json({
